@@ -30,6 +30,14 @@
   let message: string = 'X starts';
   let score = { X: 0, O: 0 };
 
+  function iconFor(p: Player): string {
+    return p === 'X' ? '♞' : '♛';
+  }
+
+  function labelFor(p: Player): string {
+    return p === 'X' ? 'X knight' : 'O queen';
+  }
+
   function handleMove(index: number) {
     if (board[index] || winner) return;
 
@@ -42,7 +50,7 @@
       winner = result.winner;
       winningLine = result.line;
       score[winner] += 1;
-      message = `${winner} wins!`;
+      message = `${labelFor(result.winner)} wins!`;
       return;
     }
 
@@ -52,7 +60,7 @@
     }
 
     xIsNext = !xIsNext;
-    message = `${xIsNext ? 'X' : 'O'} to move`;
+    message = `${labelFor(xIsNext ? 'X' : 'O')} to move`;
   }
 
   // PUBLIC_INTERFACE
@@ -83,7 +91,9 @@
 <div class="wrap">
   <header class="topbar" aria-label="Tic Tac Toe header">
     <div class="title">
-      <div class="logo">○×</div>
+      <div class="logo" title="Tic Tac Toe">
+        ♛♞
+      </div>
       <div class="text">
         <h1>Tic Tac Toe</h1>
         <p>Ocean Professional • Local play • Port {envPort}</p>
@@ -102,17 +112,19 @@
   <section class="content">
     <div class="panel status" role="status" aria-live="polite">
       <div class="turn">
-        <span class={`badge ${xIsNext ? 'x' : 'o'}`}>{xIsNext ? 'X' : 'O'}</span>
+        <span class={`badge ${xIsNext ? 'x' : 'o'}`} aria-label={labelFor(xIsNext ? 'X' : 'O')} title={labelFor(xIsNext ? 'X' : 'O')}>
+          {iconFor(xIsNext ? 'X' : 'O')}
+        </span>
         <span class="label">{winner ? 'Winner' : isDraw(board) ? 'Draw' : 'Turn'}</span>
       </div>
       <div class="message">{message}</div>
       <div class="score">
-        <div class="score-card">
-          <span class="player x">X</span>
+        <div class="score-card" aria-label="Score for X knight">
+          <span class="player x" title="X knight">♞</span>
           <span class="value">{score.X}</span>
         </div>
-        <div class="score-card">
-          <span class="player o">O</span>
+        <div class="score-card" aria-label="Score for O queen">
+          <span class="player o" title="O queen">♛</span>
           <span class="value">{score.O}</span>
         </div>
       </div>
@@ -167,6 +179,7 @@
     letter-spacing: -0.02em;
     border: 1px solid var(--border);
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+    font-size: 1.05rem;
   }
 
   .text h1 {
@@ -253,6 +266,8 @@
     letter-spacing: 0.02em;
     color: white;
     box-shadow: 0 8px 22px rgba(17, 24, 39, 0.12);
+    font-size: 1.1rem; /* ensure icon is visually balanced */
+    line-height: 1;
   }
   .badge.x { background: var(--primary); }
   .badge.o { background: var(--secondary); }
@@ -288,6 +303,12 @@
     padding: 2px 8px;
     border-radius: 8px;
     color: white;
+    display: inline-grid;
+    place-items: center;
+    font-size: 0.95rem;
+    line-height: 1;
+    width: 28px;
+    height: 28px;
   }
   .score-card .player.x { background: var(--primary); }
   .score-card .player.o { background: var(--secondary); }
